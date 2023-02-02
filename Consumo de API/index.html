@@ -9,15 +9,48 @@
 </head>
 <hr>
 <h4>Lista de Games</h4>
-<ul id="games">
-
-</ul>
+<ul id="games"></ul>
+<hr>
+<h4>Novo Jogo</h4>
+<input type="text" name="title" id="title" placeholder="título"><br>
+<input type="number" name="year" id="year" placeholder="ano"><br>
+<input type="number" name="price" id="price" placeholder="preço"><br>
+<button type="button" onclick="createGame()">Criar</button>
 
 <body>
 
 </body>
 <script src="https://cdn.jsdelivr.net/npm/axios@1.1.2/dist/axios.min.js"></script>
 <script>
+
+  function createGame() {
+    var titleInput = document.getElementById("title");
+    var yearInput = document.getElementById("year");
+    var priceInput = document.getElementById("price");
+
+    var game = {
+      title: titleInput.value,
+      year: yearInput.value,
+      price: priceInput.value,
+    }
+
+    axios.post("http://localhost:45678/game", game).then(response => {
+      if (response.status == 200) {
+        alert("Game cadastrado!")
+      }
+    }).catch(err => {
+      console.log(err);
+    });
+  }
+
+  function deleteGame(ListItem) {
+    var id = ListItem.getAttribute("data-id");
+    axios.delete("http://localhost:45678/game/" + id).then(response => {
+      alert("Game Deletado!")
+    }).catch(err => {
+      console.log(err);
+    });
+  }
 
   axios.get("http://localhost:45678/games").then(response => {
 
@@ -26,7 +59,22 @@
 
     games.forEach(game => {
       var item = document.createElement("li");
+
+      item.setAttribute("data-id", game.id);
+      item.setAttribute("data-title", game.title);
+      item.setAttribute("data-year", game.year);
+      item.setAttribute("data-price", game.price);
+
       item.innerHTML = game.id + " - " + game.title + " - R$" + game.price;
+
+      var deleteBtn = document.createElement("button");
+      deleteBtn.innerHTML = "Deletar";
+      deleteBtn.addEventListener('click', function () {
+        deleteGame(item);
+      })
+      item.appendChild(deleteBtn);
+
+
       list.appendChild(item);
     });
   }).catch(error => {

@@ -65,8 +65,7 @@ app.post("/game", (req, res) => {
     title,
     price,
     year
-  })
-
+  });
   res.sendStatus(200);
 }) 
 
@@ -75,7 +74,7 @@ app.delete("/game/:id", (req, res) => {
     res.sendStatus(400);
   }else{
     var id = parseInt(req.params.id);
-    var game = DB.games.findIndex(g => g.id == id);
+    var index = DB.games.findIndex(g => g.id == id);
 
     if(index == -1){
       res.sendStatus(404)
@@ -91,7 +90,7 @@ app.put("/game/:id", (req, res)=> {
     res.sendStatus(400);
   }else{
     var id = parseInt(req.params.id);
-    var game = DB.games.findIndex(g => g.id == id);
+    var game = DB.games.find(g => g.id == id);
   }
 
   if(game != undefined){
