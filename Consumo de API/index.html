@@ -17,6 +17,13 @@
 <input type="number" name="price" id="price" placeholder="preço"><br>
 <button type="button" onclick="createGame()">Criar</button>
 
+<h4>Editar Jogo</h4>
+<input type="text" name="idEdit" id="idEdit" placeholder="ID" readonly><br>
+<input type="text" name="titleEdit" id="titleEdit" placeholder="título"><br>
+<input type="number" name="yearEdit" id="yearEdit" placeholder="ano"><br>
+<input type="number" name="priceEdit" id="priceEdit" placeholder="preço"><br>
+<button type="button" onclick="updateGame()">Editar</button>
+
 <body>
 
 </body>
@@ -52,6 +59,40 @@
     });
   }
 
+  function loadForm(ListItem) {
+    var id = ListItem.getAttribute("data-id");
+    var title = ListItem.getAttribute("data-title");
+    var year = ListItem.getAttribute("data-year");
+    var price = ListItem.getAttribute("data-price");
+    document.getElementById("idEdit").value = id;
+    document.getElementById("titleEdit").value = title;
+    document.getElementById("yearEdit").value = year;
+    document.getElementById("priceEdit").value = price;
+  }
+
+  function updateGame() {
+    var idInput = document.getElementById("idEdit");
+    var titleInput = document.getElementById("titleEdit");
+    var yearInput = document.getElementById("yearEdit");
+    var priceInput = document.getElementById("priceEdit");
+
+    var game = {
+      title: titleInput.value,
+      year: yearInput.value,
+      price: priceInput.value,
+    }
+
+    var id = idInput.value;
+
+    axios.put("http://localhost:45678/game/" + id, game).then(response => {
+      if (response.status == 200) {
+        alert("Game atualizado!")
+      }
+    }).catch(err => {
+      console.log(err);
+    });
+  }
+
   axios.get("http://localhost:45678/games").then(response => {
 
     var games = response.data;
@@ -72,9 +113,15 @@
       deleteBtn.addEventListener('click', function () {
         deleteGame(item);
       })
+
+      var editBtn = document.createElement("button");
+      editBtn.innerHTML = "Editar";
+      editBtn.addEventListener('click', function () {
+        loadForm(item);
+      })
+
       item.appendChild(deleteBtn);
-
-
+      item.appendChild(editBtn)
       list.appendChild(item);
     });
   }).catch(error => {
